@@ -1,4 +1,4 @@
-﻿global:
+global:
   resolve_timeout: 5m
 
 # 报警模板文件
@@ -24,7 +24,7 @@ receivers:
   - send_resolved: true
     corp_id: 'wwd123456789'
     to_party: '3'
-    to_user: 'username'
+    to_user: 'username|tom|hanmeimei'
     agent_id: '1000004'
     api_secret: 'ncvhKhQ38LyF123456'
     message: '{{ template "marathon.message" . }}'

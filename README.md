@@ -40,7 +40,7 @@ monitor-compose-nginx.yml #docker-compose file文件，带nginx
 修改prometheus配置文件，添加监控任务，如：
 - job_name: 'node-exporter'
     static_configs:
-    - targets: ['10.10.17.221:9100','10.10.17.222:9100','10.10.17.223:9100']
+    - targets: ['10.10.100.221:9100','10.10.100.222:9100','10.10.100.223:9100']
     
     
 修改alertmanager配置文件，添加监控报警的接收者，如：
@@ -186,7 +186,7 @@ server {
     } 
 }
 
-第二种方法：使用域名访问，访问时： 域名+相应的url。 另外还需要修改prometheus/alertmanager/grafana的启动命令和配置文件才能访问到。可以参考官网介绍，下面有链接。
+第二种方法：使用域名访问，访问时： 域名+相应的url。 另外还需要修改prometheus/alertmanager/grafana的启动命令和配置文件才能访问到。可以参考官网介绍，下面有链接。 访问时直接绑定host或者添加DNS解析记录。
 
 # this is required to proxy Grafana Live WebSocket connections.
 map $http_upgrade $connection_upgrade {
