@@ -1,0 +1,16 @@
+[Unit]
+Description=blackbox_exporter
+After=network.target
+
+[Service]
+User=ryuser
+Group=ryuser
+Type=simple
+ExecStart=/usr/local/blackbox_exporter/blackbox_exporter --config.file /usr/local/blackbox_exporter/blackbox.yml
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

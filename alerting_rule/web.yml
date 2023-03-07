@@ -1,0 +1,19 @@
+groups:
+- name: web健康监测
+  rules:
+  - alert: web健康监测
+    expr: probe_http_status_code{job=~"blackbox"} != 200 and probe_success{job=~"blackbox"} == 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{$labels.instance}}|{{$labels.job}}|web健康监测异常请尽快确认原因"
+- name: 健康检测
+  rules:
+  - alert: 健康检测
+    expr: probe_success == 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{$labels.instance}}|{{$labels.job}}|健康检测异常请尽快确认原因"

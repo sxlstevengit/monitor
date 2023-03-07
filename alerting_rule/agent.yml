@@ -1,0 +1,10 @@
+groups:
+- name: node_status
+  rules:
+  - alert: AgentStatusDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{{$labels.instance}}|{{$labels.job}}|未能被监控，请检查与Prometheus系统的通信状态'

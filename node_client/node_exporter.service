@@ -1,0 +1,17 @@
+[Unit]
+Description=node_exporter
+After=network.target
+
+[Service]
+User=ryuser
+Group=ryuser
+Type=simple
+EnvironmentFile=-/etc/sysconfig/node_exporter
+ExecStart=/usr/local/node_exporter/node_exporter $OPTIONS
+Restart=on-failure
+KillMode=process
+RestartSec=5s
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

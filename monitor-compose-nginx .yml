@@ -1,0 +1,123 @@
+﻿version: '3.2'
+services:
+  nginx:
+    image: sxlsteven/alpine:nginx1.0.0
+    container_name: nginx
+    user: root
+    privileged: true
+    #network_mode: "host"
+    restart: always
+    ports:
+      - 80:80
+      - 9090:9090
+      - 9093:9093
+      - 3000:3000
+      - 8500:8500
+    links:
+      - prometheus
+      - alertmanager
+      - grafana
+      - consul
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+      - ./nginx/.htpasswd:/etc/nginx/basic_auth/.htpasswd:ro
+  prometheus:
+    image: sxlsteven/monitor:prometheus1.0.0
+    container_name: prometheus
+    user: root
+    #network_mode: "host"
+    restart: always
+    #ports:
+    #  - 3001:9090
+    links:
+      - alertmanager
+      - consul
+    #如果需要nginx域名反向代理访问，则需要修改--web.external-url选项，在启动命令中添加即可。
+    # command:
+    #   - --web.enable-lifecycle
+    #   - --config.file=/etc/prometheus/prometheus.yml
+    #   - --storage.tsdb.path=/prometheus
+    #   - --web.console.libraries=/usr/share/prometheus/console_libraries
+    #   - --web.console.templates=/usr/share/prometheus/consoles
+    #   - --storage.tsdb.retention=180d
+    #   - --web.read-timeout=5m
+    #   - --web.max-connections=50
+    #   - --query.max-concurrency=20
+    #   - --query.timeout=2m
+    #   - --web.external-url=prometheus
+    volumes:
+      - /data/monitor-data/prometheus:/prometheus:rw
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./alerting_rule:/etc/prometheus/alerting_rule:ro
+      - ./probes:/etc/prometheus/probes
+
+  alertmanager:
+    image: sxlsteven/monitor:alertmanager1.0.0
+    container_name: alertmanager
+    user: root
+    #network_mode: "host"
+    restart: always
+    # ports:
+    #   - 3002:9093
+    #   - 3003:9094
+    links:
+      - dingtalk
+    #如果需要nginx域名反向代理访问，需要--web.external-url选项，在启动命令中添加即可。注意这个和prometheus不太一样，需要写完整的域名。
+    # command:
+    #   - --config.file=/etc/alertmanager/alertmanager.yml
+    #   - --storage.path=/alertmanager
+    #   - --data.retention=120h
+    #   - --web.route-prefix=/
+    #   - --web.external-url=http://monitor.abc.com/alertmanager
+    volumes:
+      - /data/monitor-data/alertmanager:/alertmanager:rw
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - ./default.tmpl:/etc/alertmanager/default.tmpl:ro
+
+  dingtalk:
+    image: sxlsteven/monitor:dingtalk1.0.0
+    container_name: dingtalk
+    user: root
+    #network_mode: "host"
+    restart: always
+    #ports:
+    #  - 8086:8086
+    volumes:
+      - ./config.yml:/usr/local/dingtalk/config.yml:ro
+
+  grafana:
+    image: sxlsteven/monitor:grafana1.0.1
+    container_name: grafana
+    user: root
+    #network_mode: "host"
+    restart: always
+    links:
+      - dingtalk
+      - prometheus
+      - alertmanager
+      - consul
+    # ports:
+    #   - 3000:3000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "10"
+    volumes:
+      - /data/monitor-data/grafana:/var/lib/grafana:rw
+      - ./grafana.ini:/etc/grafana/grafana.ini:ro
+      - /etc/localtime:/etc/localtime
+      - /etc/timezone:/etc/timezone
+
+  consul:
+    image: sxlsteven/monitor:consul1.0.0
+    container_name: consul
+    user: root
+    restart: always
+    # ports:
+    #   - 8500:8500
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    volumes:
+      - ./consul:/consul 

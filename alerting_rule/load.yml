@@ -1,0 +1,11 @@
+groups:
+- name: 系统负载
+  rules:
+  - alert: 系统负载 
+    expr: node_load5 > 10
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "主机｜{{$labels.instance}}|{{$labels.job}}｜，1分钟内系统load5大于设定阈值10，请检查系统负载情况"
+

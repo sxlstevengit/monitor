@@ -1,0 +1,8 @@
+[{
+  "targets": [
+     "http://www.baidu.com",
+     "http://xyz.abc.com/111/20200922/18b05ed529365ab5c4e0460f5df9656f.png",
+     "http://xyz.abc.com/platform-carrier-server/actuator/health",
+     "http://www.alidns.com"
+  ]
+}]

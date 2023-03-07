@@ -1,0 +1,10 @@
+groups:
+- name: memory_alert
+  rules:
+  - alert: 内存告警
+    expr: round(100-((node_memory_MemAvailable_bytes*100)/node_memory_MemTotal_bytes)) > 85
+    for: 5m 
+    labels:
+      severity: warning
+    annotations:
+      summary: '主机|{{$labels.instance}}|的内存在5分钟内使用率大于85%，请及时检查系统运行状态'

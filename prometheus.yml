@@ -1,0 +1,115 @@
+# my global config
+global:
+  scrape_interval:     60s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  scrape_timeout: 60s  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "alerting_rule/*.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+  - job_name: 'node-exporter'
+    static_configs:
+    - targets: ['10.10.100.221:9100','10.10.100.222:9100','10.10.100.223:9100']
+  - job_name: 'haproxy-exporter'
+    consul_sd_configs:
+    - server: consul:8500
+      services:
+      - haproxy_exporter  
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    file_sd_configs:
+    - files:
+      - probes/http.json
+      refresh_interval: 30s
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 10.10.100.223:9115
+  - job_name: 'blackbox-tcp'
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+    - targets:
+      - 10.10.100.221:80
+      - 10.10.100.221:8333
+      - 10.10.100.221:8080
+      - 10.10.100.221:3306
+      - 10.10.100.221:15672
+      - 10.10.100.221:9090
+      - 10.10.100.221:8334
+      - 10.10.100.222:80
+      - 10.10.100.222:8333
+      - 10.10.100.222:8080
+      - 10.10.100.222:3306
+      - 10.10.100.222:15672
+      - 10.10.100.222:9090
+      - 10.10.100.222:8334
+      - 10.10.100.223:80
+      - 10.10.100.223:8333
+      - 10.10.100.223:8080
+      - 10.10.100.223:15672
+      - 10.10.100.223:9090
+      - 10.10.100.223:8334
+      - 10.10.100.223:6379
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 10.10.100.223:9115
+  - job_name: 'blackbox-http-custom'
+    metrics_path: /probe
+    params:
+      module: [http_2xx_custom]
+    static_configs:
+    - targets:
+      - http://xyz.abc.com/platform-carrier-server/actuator/health
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 10.10.100.223:9115
+  - job_name: 'blackbox-icmp'
+    metrics_path: /probe
+    params:
+      module: [icmp_ipv4]
+    static_configs:
+    - targets:
+      - 10.10.100.221
+      - 10.10.100.220
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 10.10.100.223:9115
