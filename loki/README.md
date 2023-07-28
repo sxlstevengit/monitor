@@ -1,14 +1,16 @@
 ﻿## docker-compose安装
 
 打开URL
+
 https://github.com/docker/compose/releases/
 
 复制下载链接并下载，如下
+
 wget https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
 
 移动到bin目录下，并给运行权限
-mv docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+
+mv docker-compose-Linux-x86_64 /usr/local/bin/docker-compose  &&  chmod +x /usr/local/bin/docker-compose
 
 ## 构建prometheus-webhook-dingtalk镜像
 
@@ -41,8 +43,10 @@ docker build -t tag_name .
 ### 注意事项
 
 docker-compose.yml文件更新之后，直接重新docker-compose -f monitor-compose.yml up -d即可。
+
 对修改的服务会进行重建，对于没有修改的会输出dingtalk is up-to-date
 
+```shell
 看如下日志输出：
 [root@cdh-master loki]# docker-compose up -d
 loki_promtail_1 is up-to-date
@@ -50,3 +54,5 @@ dingtalk is up-to-date
 loki_grafana_1 is up-to-date
 alertmanager is up-to-date
 loki_loki_1 is up-to-date
+```
+
