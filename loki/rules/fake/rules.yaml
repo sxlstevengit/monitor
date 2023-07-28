@@ -1,0 +1,21 @@
+groups:
+  - name: should_fire
+    rules:
+      - alert: HighPercentageError
+        expr: |
+          sum(rate({app="foo", env="production"} |= "error" [5m])) by (job)
+            /
+          sum(rate({app="foo", env="production"}[5m])) by (job)
+            > 0.05
+        for: 1m
+        labels:
+            severity: page
+        annotations:
+            summary: High request latency
+      - alert: nginx日志关键字报警
+        expr: sum(count_over_time({filename="/var/log/nginx/access.log"} |= "200" [10s])) > 0
+        for: 5s
+        labels:
+            severity: warning
+        annotations:
+            summary: nginx日志出现304错误,请尽快确认原因。

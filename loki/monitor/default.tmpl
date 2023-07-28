@@ -1,0 +1,113 @@
+{{ define "dingding.message" }}{{ range .Alerts.Firing }}
+**【Alert】**
+=======================
+**告警名称:**  {{ .Labels.alertname }}
+**告警模块:**  {{ .Labels.app }}
+**迭代时间:**  {{ .Labels.app_version }}
+**告警级别:**  {{ .Labels.severity }}
+**告警内容:**  {{ .Annotations.summary }}
+**触发时间:**  {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ range .Alerts.Resolved }}
+**【Resolved】**
+=======================
+**告警类型:**  {{ .Labels.alertname }}
+**告警模块:**  {{ .Labels.app }}
+**迭代时间:**  {{ .Labels.app_version }}
+**告警级别:**  {{ .Labels.severity }}
+**告警内容:**  {{ .Annotations.summary }}
+**触发时间:**  {{ (.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+**恢复时间:**  {{ (.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ end }}
+{{ define "wechat.default.message" }}{{ range .Alerts.Firing }}
+【Alert】
+=======================
+告警名称：{{ .Labels.alertname }}
+告警模块：{{ .Labels.app }}
+告警级别：{{ .Labels.severity }}
+主机地址: {{ .Labels.host }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ range .Alerts.Resolved }}
+【Resolved】
+=======================
+告警类型：{{ .Labels.alertname }}
+告警模块：{{ .Labels.app }}
+告警级别：{{ .Labels.severity }}
+主机地址: {{ .Labels.host }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+恢复时间: {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ end }}
+
+{{ define "marathon.message" }}{{ range .Alerts.Firing }}
+【Alert】
+=======================
+告警名称：{{ .Labels.alertname }}
+告警模块：{{ .Labels.app }}
+迭代时间: {{ .Labels.app_version }}
+告警级别：{{ .Labels.severity }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ range .Alerts.Resolved }}
+【Resolved】
+=======================
+告警类型：{{ .Labels.alertname }}
+告警模块：{{ .Labels.app }}
+迭代时间: {{ .Labels.app_version }}
+告警级别：{{ .Labels.severity }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+恢复时间: {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ end }}
+
+{{ define "wwj.message" }}{{ range .Alerts.Firing }}
+【Alert】
+=======================
+告警名称：{{ .Labels.alertname }}
+告警级别：{{ .Labels.severity }}
+主机名称: {{ .Labels.hostname }}
+主机地址: {{ .Labels.ipaddress }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ range .Alerts.Resolved }}
+【Resolved】
+=======================
+告警类型：{{ .Labels.alertname }}
+告警级别：{{ .Labels.severity }}
+主机名称: {{ .Labels.hostname }}
+主机地址：{{ .Labels.ipaddress }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+恢复时间: {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ end }}
+
+{{ define "base.message" }}{{ range .Alerts.Firing }}
+【Alert】
+=======================
+告警名称：{{ .Labels.alertname }}
+告警级别：{{ .Labels.severity }}
+主机名称: {{ .Labels.instance }}
+主机地址: {{ .Labels.ipaddress }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ range .Alerts.Resolved }}
+【Resolved】
+=======================
+告警类型：{{ .Labels.alertname }}
+告警级别：{{ .Labels.severity }}
+主机名称: {{ .Labels.instance }}
+主机地址：{{ .Labels.ipaddress }}
+告警内容: {{ .Annotations.summary }}
+触发时间: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+恢复时间: {{ .EndsAt.Format "2006-01-02 15:04:05" }}
+=======================
+{{ end }}{{ end }}

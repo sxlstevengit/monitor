@@ -1,0 +1,38 @@
+{{ define "dingding.message" }}
+
+{{- if gt (len .Alerts.Firing) 0 -}}
+{{- range $index, $alert := .Alerts -}}
+
+=========  **监控告警** =========  
+
+**告警名称:**    {{ $alert.Labels.alertname }}   
+**告警级别:**    {{ $alert.Labels.severity }}    
+**告警模块:**    {{ $alert.Labels.app }}   
+**迭代时间:**    {{ $alert.Labels.app_version }}   
+**故障主机:**    {{ $alert.Labels.instance }} {{ $alert.Labels.device }}   
+**告警内容:**    {{ .Annotations.summary }}   
+**告警详情:**    {{ $alert.Annotations.message }}{{ $alert.Annotations.description}}   
+**主机标签:**    {{ range .Labels.SortedPairs  }}  </br> [{{ .Name }}: {{ .Value | markdown | html }} ] 
+{{- end }} </br>
+
+**故障时间:**    {{ ($alert.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}  
+========= = end =  =========  
+{{- end }}
+{{- end }}
+
+{{- if gt (len .Alerts.Resolved) 0 -}}
+{{- range $index, $alert := .Alerts -}}
+
+========= 告警恢复 =========  
+**告警名称:**    {{ .Labels.alertname }}  
+**告警内容:**    {{ $alert.Annotations.summary }}  
+**告警主机:**    {{ .Labels.instance }}   
+**告警级别:**    {{ $alert.Labels.severity }}    
+**告警详情:**    {{ $alert.Annotations.message }}{{ $alert.Annotations.description}}  
+**故障时间:**    {{ ($alert.StartsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}  
+**恢复时间:**    {{ ($alert.EndsAt.Add 28800e9).Format "2006-01-02 15:04:05" }}  
+
+========= = **end** =  =========
+{{- end }}
+{{- end }}
+{{- end }}

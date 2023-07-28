@@ -1,0 +1,124 @@
+version: "3"
+
+networks:
+  loki:
+
+services:
+  loki:
+    image: grafana/loki:2.8.0
+    user: root
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./local-config.yaml:/etc/loki/local-config.yaml
+      - ./rules:/loki/rules
+    command: -config.file=/etc/loki/local-config.yaml
+    links:
+      - alertmanager
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.8.0
+    user: root
+    privileged: true
+    volumes:
+      - /var/log:/var/log
+      - ./config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - loki
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
+  
+  alertmanager:
+    image: bitnami/alertmanager:latest
+    container_name: alertmanager
+    user: root
+    #network_mode: "host"
+    networks:
+      - loki
+    restart: always
+    ports:
+      - 9093:9093
+      - 9094:9094
+    links:
+      - dingtalk
+    #command:
+    #  - --storage.path=/alertmanager
+    #  - --data.retention=120h
+    #  - --config.file=/etc/alertmanager/alertmanager.yml
+    volumes:
+      - ./monitor/alertmanager.yml:/opt/bitnami/alertmanager/conf/config.yml:ro
+      - ./monitor/default.tmpl:/opt/bitnami/alertmanager/conf/default.tmpl:ro
+
+ # alertmanager:
+ #   image: sxlsteven/monitor:alertmanager1.0.0
+ #   container_name: alertmanager
+ #   user: root
+ #   #network_mode: "host"
+ #   networks:
+ #     - loki
+ #   restart: always
+ #   ports:
+ #     - 9093:9093
+ #     - 9094:9094
+ #   links:
+ #     - dingtalk
+ #   #command:
+ #   #  - --storage.path=/alertmanager
+ #   #  - --data.retention=120h
+ #   #  - --config.file=/etc/alertmanager/alertmanager.yml
+ #   volumes:
+ #     - /data/alertmanager:/alertmanager:rw
+ #     - ./monitor/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+ #     - ./monitor/default.tmpl:/etc/alertmanager/default.tmpl:ro
+
+  dingtalk:
+    #image: sxlsteven/monitor:dingtalk1.0.0
+    image: sxlsteven/monitor:dingtalk2.0.0
+    container_name: dingtalk
+    user: root
+    #network_mode: "host"
+    networks:
+      - loki
+    restart: always
+    ports:
+      - 8086:8086
+    command:
+      - --web.listen-address=0.0.0.0:8086 
+      - --config.file=config.yml
+      - --web.enable-ui
+      - --web.enable-lifecycle
+    volumes:
+      - ./monitor/config.yml:/usr/local/dingtalk/config.yml:ro 
+      - ./monitor/default.tmpl:/usr/local/dingtalk/contrib/templates/default.tmpl:ro 
+      - ./monitor/dingtalk.tmpl:/usr/local/dingtalk/contrib/templates/dingtalk.tmpl:ro 

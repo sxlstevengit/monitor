@@ -1,0 +1,10 @@
+groups:
+- name: haproxy服务
+  rules:
+  - alert: haproxy服务告警
+    expr: haproxy_up == 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: '主机|{{$labels.instance}}|haproxy服务检测结果是:{{$value}}，请检查确认'

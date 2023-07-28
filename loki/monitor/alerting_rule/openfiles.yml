@@ -1,0 +1,10 @@
+groups:
+- name: openfiles_alert
+  rules:
+  - alert: 文件打开数告警
+    expr: process_open_fds > 100
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: '主机|{{$labels.instance}}|的文件打开数是{{$value}}，请检查系统运行状态'

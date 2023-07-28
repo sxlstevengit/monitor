@@ -1,0 +1,27 @@
+global:
+  resolve_timeout: 5m
+
+# 报警模板文件
+templates:
+  - 'default.tmpl'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1m
+  receiver: 'DingDing'
+receivers:
+- name: 'web.hook'
+  webhook_configs:
+  - url: 'http://127.0.0.1:5001/'
+- name: 'DingDing'
+  webhook_configs:
+  - url: 'http://dingtalk:8086/dingtalk/webhook1/send' 
+    send_resolved: true
+#inhibit_rules:
+#  - source_match:
+#      severity: 'critical'
+#    target_match:
+#      severity: 'warning'
+#    equal: ['alertname', 'dev', 'instance']
