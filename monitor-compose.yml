@@ -55,6 +55,7 @@ services:
       - prometheus
       - alertmanager
       - consul
+      - blackbox
     ports:
       - 3000:3000
     logging:
@@ -79,3 +80,13 @@ services:
       - CONSUL_BIND_INTERFACE=eth0
     volumes:
       - ./consul:/consul 
+
+  blackbox:
+    image: quay.io/prometheus/blackbox-exporter:latest
+    container_name: blackbox
+    user: root
+    restart: always
+    ports:
+      - 9115:9115
+    volumes:
+      - ./node_client/blackbox.yml:/etc/blackbox_exporter/config.yml
