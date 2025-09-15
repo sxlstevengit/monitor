@@ -1,0 +1,30 @@
+{
+    "data-root": "/data/docker",
+    "exec-opts": [
+        "native.cgroupdriver=systemd"
+    ],
+    "insecure-registries": [
+        "harbor.xxx.com",
+        "repo.xxx.com:5000",
+        "harbor.intecloud.com.cn"
+    ],
+     "registry-mirrors": [
+        "https://mr90zuen.mirror.aliyuncs.com",
+        "https://docker.1panel.live",
+    "https://docker.1ms.run",
+    "https://dytt.online",
+    "https://docker-0.unsee.tech",
+    "https://lispy.org",
+    "https://docker.xiaogenban1993.com",
+    "https://666860.xyz",
+    "https://hub.rat.dev",
+    "https://docker.m.daocloud.io",
+    "https://demo.52013120.xyz",
+    "https://proxy.vvvv.ee",
+    "https://registry.cyou"
+                         ],
+    "log-driver": "json-file",
+    "log-opts": {
+        "max-size": "100m"
+    }
+}

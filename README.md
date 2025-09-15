@@ -273,3 +273,9 @@ Recreating prometheus ... done
 
 ```
 
+### docker容器镜像加速
+```
+可以直接使用docker目录下的daemon.json
+
+```
+
